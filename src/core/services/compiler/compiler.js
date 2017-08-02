@@ -181,12 +181,14 @@ function MdCompilerProvider($compileProvider) {
     return false;
   }
 
-  this.$get = ["$q", "$templateRequest", "$injector", "$compile", "$controller",
-    function($q, $templateRequest, $injector, $compile, $controller) {
-      return new MdCompilerService($q, $templateRequest, $injector, $compile, $controller);
+  this.$get = ["$injector",
+    function($injector) {
+      return $injector.instantiate(MdCompilerService);
     }];
-
-  function MdCompilerService($q, $templateRequest, $injector, $compile, $controller) {
+  /**
+   * @ngInject
+   */
+  function MdCompilerService($q, $templateRequest, $injector, $compile, $controller, $document) {
 
     /** @private @const {!angular.$q} */
     this.$q = $q;
@@ -202,6 +204,9 @@ function MdCompilerProvider($compileProvider) {
 
     /** @private @const {!angular.$controller} */
     this.$controller = $controller;
+
+    /** @private @const {!angular.$controller} */
+    this.$document = $document;
   }
 
   /**
@@ -409,7 +414,7 @@ function MdCompilerProvider($compileProvider) {
    * @private
    */
   MdCompilerService.prototype._fetchContentElement = function(options) {
-
+    var document = this.$document[0];
     var contentEl = options.contentElement;
     var restoreFn = null;
 
